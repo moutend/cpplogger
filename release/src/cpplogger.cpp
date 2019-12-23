@@ -1,9 +1,8 @@
 #include <chrono>
+#include <cpplogger/cpplogger.h>
 #include <cstring>
 #include <mutex>
 #include <sstream>
-
-#include "cpplogger.h"
 
 namespace Logger {
 Logger::Logger() {}
