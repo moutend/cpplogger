@@ -5,27 +5,38 @@
 #include <sstream>
 
 namespace Logger {
-Logger::Logger() {}
+Logger::Logger(const std::wstring &source, const std::wstring &version,
+               int32_t maxMessages) {
+  mSource = source;
+  mVersion = version;
+  mMaxMessages = maxMessages;
+  mMessages = new LogMessage *[maxMessages] { nullptr };
+}
 
-Logger::~Logger() {}
+Logger::~Logger() {
+  Clear();
+
+  delete[] mMessages;
+  mMessages = nullptr;
+}
 
 void Logger::Info(const std::wstring &message, int64_t threadId,
-                  int32_t lineNumber, const std::wstring &fileName) {
-  Write(INFO, message, threadId, lineNumber, fileName);
+                  const std::wstring &path) {
+  Write(L"INFO", message, threadId, path);
 }
 
 void Logger::Warn(const std::wstring &message, int64_t threadId,
-                  int32_t lineNumber, const std::wstring &fileName) {
-  Write(WARN, message, threadId, lineNumber, fileName);
+                  const std::wstring &path) {
+  Write(L"WARN", message, threadId, path);
 }
 
 void Logger::Fail(const std::wstring &message, int64_t threadId,
-                  int32_t lineNumber, const std::wstring &fileName) {
-  Write(FAIL, message, threadId, lineNumber, fileName);
+                  const std::wstring &path) {
+  Write(L"FAIL", message, threadId, path);
 }
 
-void Logger::Write(Level level, const std::wstring &message, int64_t threadId,
-                   int32_t lineNumber, const std::wstring &fileName) {
+void Logger::Write(const std::wstring &level, const std::wstring &message,
+                   int64_t threadId, const std::wstring &path) {
   std::lock_guard<std::mutex> guard(mMutex);
 
   int64_t now = std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -33,43 +44,39 @@ void Logger::Write(Level level, const std::wstring &message, int64_t threadId,
                     .count();
 
   int64_t sec = now / 1000000000;
-  int64_t nsec = now % 1000000000;
+  int64_t nano = now % 1000000000;
 
-  mBuffer << L"level:";
+  delete mMessages[mIndex];
+  mMessages[mIndex] = nullptr;
+  mMessages[mIndex] = new LogMessage();
 
-  switch (level) {
-  case INFO:
-    mBuffer << L"INFO\t";
-    break;
-  case WARN:
-    mBuffer << L"WARN\t";
-    break;
-  case FAIL:
-    mBuffer << L"FAIL\t";
-    break;
-  }
+  size_t levelLength = std::wcslen(level.c_str());
+  mMessages[mIndex]->Level = new wchar_t[levelLength + 1]{};
+  std::wmemcpy(mMessages[mIndex]->Level, level.c_str(), levelLength);
 
-  mBuffer << L"message:" << message << L"\t";
-  mBuffer << L"timestamp:" << sec << L"." << nsec << L"\t";
-  mBuffer << L"thread:" << threadId << L"\t";
-  mBuffer << L"file:" << fileName << L":" << lineNumber << L"\n";
+  size_t messageLength = std::wcslen(message.c_str());
+  mMessages[mIndex]->Message = new wchar_t[messageLength + 1]{};
+  std::wmemcpy(mMessages[mIndex]->Message, message.c_str(), messageLength);
+
+  size_t pathLength = std::wcslen(path.c_str());
+  mMessages[mIndex]->Path = new wchar_t[pathLength + 1]{};
+  std::wmemcpy(mMessages[mIndex]->Path, path.c_str(), pathLength);
+
+  mMessages[mIndex]->ThreadId = threadId;
+  mMessages[mIndex]->UnixTimestampSec = sec;
+  mMessages[mIndex]->UnixTimestampNano = nano;
+
+  mIndex = (mIndex + 1) % mMaxMessages;
 }
 
-bool Logger::IsEmpty() {
+void Logger::Clear() {
   std::lock_guard<std::mutex> guard(mMutex);
 
-  return mBuffer.str().empty();
+  for (int32_t i = 0; i < mMaxMessages; i++) {
+    delete mMessages[i];
+    mMessages[i] = nullptr;
+  }
+
+  mIndex = 0;
 }
-
-void Logger::Copy(wchar_t *destination, size_t numberOfChars) {
-  std::wmemcpy(destination, mBuffer.str().c_str(), numberOfChars);
-}
-
-int Logger::Size() { return static_cast<int>(mBuffer.str().size()); }
-
-void Logger::Clear() { std::wstringstream().swap(mBuffer); }
-
-void Logger::Lock() { mMutex.lock(); }
-
-void Logger::Unlock() { mMutex.unlock(); }
 } // namespace Logger
