@@ -1,8 +1,18 @@
 #include <chrono>
 #include <cpplogger/cpplogger.h>
+#include <cpprest/http_client.h>
 #include <cstring>
 #include <mutex>
 #include <sstream>
+
+#ifdef _UTF16_STRINGS
+#define __key(x) L##x
+#else
+#define __key(x) x
+#endif
+
+using namespace web;
+using namespace web::http;
 
 namespace Logger {
 Logger::Logger(const std::wstring &source, const std::wstring &version,
@@ -78,5 +88,34 @@ void Logger::Clear() {
   }
 
   mIndex = 0;
+}
+
+json::value Logger::ToJSON() {
+  json::value messages;
+
+  for (int32_t i = 0; i < mMaxMessages; i++) {
+    if (mMessages[i] == nullptr) {
+      break;
+    }
+
+    json::value m;
+    m[__key("level")] = json::value(mMessages[i]->Level);
+    m[__key("source")] = json::value(mSource.c_str());
+    m[__key("version")] = json::value(mVersion.c_str());
+    m[__key("message")] = json::value(mMessages[i]->Message);
+    m[__key("threadId")] = json::value(mMessages[i]->ThreadId);
+    m[__key("unixTimestampSec")] = json::value(mMessages[i]->UnixTimestampSec);
+    m[__key("unixTimestampNano")] =
+        json::value(mMessages[i]->UnixTimestampNano);
+    m[__key("path")] = json::value(mMessages[i]->Path);
+
+    messages[i] = m;
+  }
+
+  json::value o;
+
+  o[__key("messages")] = messages;
+
+  return o;
 }
 } // namespace Logger

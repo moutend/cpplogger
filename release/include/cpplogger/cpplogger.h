@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cpprest/http_client.h>
 #include <cstdint>
 #include <mutex>
 #include <sstream>
@@ -11,6 +12,9 @@
 #define C_STRINGIFY1(x) C_STRINGIFY2(x)
 #define __LONGFILE__                                                           \
   WC_STRINGIFY1(__FILE__) L":" WC_STRINGIFY1(C_STRINGIFY1(__LINE__))
+
+using namespace web;
+using namespace web::http;
 
 namespace Logger {
 class LogMessage {
@@ -42,6 +46,7 @@ public:
              int64_t threadId, const std::wstring &fileName);
 
   void Clear();
+  json::value ToJSON();
 
 private:
   std::mutex mMutex;
