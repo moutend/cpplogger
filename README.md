@@ -1,7 +1,7 @@
 cpplogger
 =========
 
-Tiny logger library based on string stream.
+Tiny logger library based on ring buffer.
 
 ## LICENSE
 

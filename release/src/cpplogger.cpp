@@ -59,8 +59,6 @@ void Logger::Write(const utility::string_t &level,
 }
 
 void Logger::Clear() {
-  std::lock_guard<std::mutex> guard(mMutex);
-
   for (int32_t i = 0; i < mMaxMessages; i++) {
     mMessages[i].Level.clear();
     mMessages[i].Message.clear();
