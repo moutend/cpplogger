@@ -11,11 +11,11 @@
 #define __cstringify1(x) __cstringify2(x)
 
 #ifdef _UTF16_STRINGS
-#define __key(x) L##x
+#define __ustring(x) L##x
 #define __LONGFILE__                                                           \
   __wcstringify1(__FILE__) L":" __wcstringify1(__cstringify1(__LINE__))
 #else
-#define __key(x) x
+#define __ustring(x) x
 #define __LONGFILE__ __FILE__ ":" __cstringify1(__LINE__)
 #endif
 

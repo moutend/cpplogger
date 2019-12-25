@@ -22,17 +22,17 @@ Logger::~Logger() {
 
 void Logger::Info(const utility::string_t &message, int64_t threadId,
                   const utility::string_t &path) {
-  Write(__key("INFO"), message, threadId, path);
+  Write(__ustring("INFO"), message, threadId, path);
 }
 
 void Logger::Warn(const utility::string_t &message, int64_t threadId,
                   const utility::string_t &path) {
-  Write(__key("WARN"), message, threadId, path);
+  Write(__ustring("WARN"), message, threadId, path);
 }
 
 void Logger::Fail(const utility::string_t &message, int64_t threadId,
                   const utility::string_t &path) {
-  Write(__key("FAIL"), message, threadId, path);
+  Write(__ustring("FAIL"), message, threadId, path);
 }
 
 void Logger::Write(const utility::string_t &level,
@@ -84,21 +84,23 @@ json::value Logger::ToJSON() {
 
     json::value m;
 
-    m[__key("level")] = json::value(mMessages[i].Level);
-    m[__key("source")] = json::value(mSource);
-    m[__key("version")] = json::value(mVersion);
-    m[__key("message")] = json::value(mMessages[i].Message);
-    m[__key("threadId")] = json::value(mMessages[i].ThreadId);
-    m[__key("unixTimestampSec")] = json::value(mMessages[i].UnixTimestampSec);
-    m[__key("unixTimestampNano")] = json::value(mMessages[i].UnixTimestampNano);
-    m[__key("path")] = json::value(mMessages[i].Path);
+    m[__ustring("level")] = json::value(mMessages[i].Level);
+    m[__ustring("source")] = json::value(mSource);
+    m[__ustring("version")] = json::value(mVersion);
+    m[__ustring("message")] = json::value(mMessages[i].Message);
+    m[__ustring("threadId")] = json::value(mMessages[i].ThreadId);
+    m[__ustring("unixTimestampSec")] =
+        json::value(mMessages[i].UnixTimestampSec);
+    m[__ustring("unixTimestampNano")] =
+        json::value(mMessages[i].UnixTimestampNano);
+    m[__ustring("path")] = json::value(mMessages[i].Path);
 
     messages[i] = m;
   }
 
   json::value o;
 
-  o[__key("messages")] = messages;
+  o[__ustring("messages")] = messages;
 
   return o;
 }

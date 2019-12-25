@@ -1,13 +1,14 @@
 #include <cpplogger/cpplogger.h>
 
 int main() {
-  Logger::Logger *l = new Logger::Logger(__key("source"), __key("version"), 3);
+  Logger::Logger *l =
+      new Logger::Logger(__ustring("source"), __ustring("version"), 3);
   if (!l->IsEmpty()) {
     return -1;
   }
 
-  l->Info(__key("foo1"), 0, __LONGFILE__);
-  l->Info(__key("foo2"), 0, __LONGFILE__);
+  l->Info(__ustring("foo1"), 0, __LONGFILE__);
+  l->Info(__ustring("foo2"), 0, __LONGFILE__);
 
   if (l->IsEmpty()) {
     return -1;
@@ -15,12 +16,12 @@ int main() {
 
   json::value result1 = l->ToJSON();
 
-  if (result1[__key("messages")][0][__key("message")] !=
-      json::value(__key("foo1"))) {
+  if (result1[__ustring("messages")][0][__ustring("message")] !=
+      json::value(__ustring("foo1"))) {
     return -1;
   }
-  if (result1[__key("messages")][1][__key("message")] !=
-      json::value(__key("foo2"))) {
+  if (result1[__ustring("messages")][1][__ustring("message")] !=
+      json::value(__ustring("foo2"))) {
     return -1;
   }
 
@@ -31,8 +32,8 @@ int main() {
     return -1;
   }
 
-  l->Warn(__key("bar1"), 0, __LONGFILE__);
-  l->Warn(__key("bar2"), 0, __LONGFILE__);
+  l->Warn(__ustring("bar1"), 0, __LONGFILE__);
+  l->Warn(__ustring("bar2"), 0, __LONGFILE__);
 
   if (l->IsEmpty()) {
     return -1;
@@ -40,12 +41,12 @@ int main() {
 
   json::value result2 = l->ToJSON();
 
-  if (result2[__key("messages")][0][__key("message")] !=
-      json::value(__key("bar1"))) {
+  if (result2[__ustring("messages")][0][__ustring("message")] !=
+      json::value(__ustring("bar1"))) {
     return -1;
   }
-  if (result2[__key("messages")][1][__key("message")] !=
-      json::value(__key("bar2"))) {
+  if (result2[__ustring("messages")][1][__ustring("message")] !=
+      json::value(__ustring("bar2"))) {
     return -1;
   }
 
@@ -56,11 +57,11 @@ int main() {
     return -1;
   }
 
-  l->Fail(__key("foobar1"), 0, __LONGFILE__);
-  l->Fail(__key("foobar2"), 0, __LONGFILE__);
-  l->Fail(__key("foobar3"), 0, __LONGFILE__);
-  l->Fail(__key("foobar4"), 0, __LONGFILE__);
-  l->Fail(__key("foobar5"), 0, __LONGFILE__);
+  l->Fail(__ustring("foobar1"), 0, __LONGFILE__);
+  l->Fail(__ustring("foobar2"), 0, __LONGFILE__);
+  l->Fail(__ustring("foobar3"), 0, __LONGFILE__);
+  l->Fail(__ustring("foobar4"), 0, __LONGFILE__);
+  l->Fail(__ustring("foobar5"), 0, __LONGFILE__);
 
   if (l->IsEmpty()) {
     return -1;
@@ -68,16 +69,16 @@ int main() {
 
   json::value result3 = l->ToJSON();
 
-  if (result3[__key("messages")][0][__key("message")] !=
-      json::value(__key("foobar4"))) {
+  if (result3[__ustring("messages")][0][__ustring("message")] !=
+      json::value(__ustring("foobar4"))) {
     return -1;
   }
-  if (result3[__key("messages")][1][__key("message")] !=
-      json::value(__key("foobar2"))) {
+  if (result3[__ustring("messages")][1][__ustring("message")] !=
+      json::value(__ustring("foobar2"))) {
     return -1;
   }
-  if (result3[__key("messages")][2][__key("message")] !=
-      json::value(__key("foobar5"))) {
+  if (result3[__ustring("messages")][2][__ustring("message")] !=
+      json::value(__ustring("foobar5"))) {
     return -1;
   }
 
