@@ -46,14 +46,14 @@ public:
   void Write(const utility::string_t &level, const utility::string_t &message,
              int64_t threadId, const utility::string_t &fileName);
 
-  void Clear();
   json::value ToJSON();
-
   bool IsEmpty();
-  void Lock();
-  void Unlock();
+  void Clear();
 
 private:
+  json::value toJSONAt(int32_t i);
+  void clearAt(int32_t i);
+
   std::mutex mMutex;
 
   utility::string_t mSource;
@@ -61,6 +61,7 @@ private:
 
   int32_t mMessageCount = 0;
   int32_t mIndex = 0;
+  int32_t mBeginIndex = 0;
   int32_t mMaxMessages = 0;
 
   LogMessage *mMessages = nullptr;
