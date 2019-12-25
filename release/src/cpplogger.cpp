@@ -70,6 +70,7 @@ void Logger::Clear() {
     mMessages[i].UnixTimestampNano = 0;
   }
 
+  mMessageCount = 0;
   mIndex = 0;
 }
 
@@ -102,7 +103,7 @@ json::value Logger::ToJSON() {
   return o;
 }
 
-bool Logger::IsEmpty() { return mMessageCount >= mMaxMessages; }
+bool Logger::IsEmpty() { return mMessageCount == 0; }
 void Logger::Lock() { mMutex.lock(); }
 void Logger::Unlock() { mMutex.unlock(); }
 } // namespace Logger
