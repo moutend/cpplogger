@@ -2,7 +2,7 @@
 
 int main() {
   Logger::Logger *l =
-      new Logger::Logger(__ustring("source"), __ustring("version"), 3);
+      new Logger::Logger(__ustring("main_test"), __ustring("develop"), 3);
   if (!l->IsEmpty()) {
     return -1;
   }
@@ -25,7 +25,6 @@ int main() {
     return -1;
   }
 
-  return 0;
   l->Clear();
 
   if (!l->IsEmpty()) {
@@ -50,7 +49,6 @@ int main() {
     return -1;
   }
 
-  return 0;
   l->Clear();
 
   if (!l->IsEmpty()) {
@@ -70,11 +68,11 @@ int main() {
   json::value result3 = l->ToJSON();
 
   if (result3[__ustring("messages")][0][__ustring("message")] !=
-      json::value(__ustring("foobar4"))) {
+      json::value(__ustring("foobar3"))) {
     return -1;
   }
   if (result3[__ustring("messages")][1][__ustring("message")] !=
-      json::value(__ustring("foobar2"))) {
+      json::value(__ustring("foobar4"))) {
     return -1;
   }
   if (result3[__ustring("messages")][2][__ustring("message")] !=
