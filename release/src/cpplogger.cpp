@@ -76,8 +76,6 @@ json::value Logger::toJSONAt(int32_t i) {
 }
 
 json::value Logger::ToJSON() {
-  std::lock_guard<std::mutex> guard(mMutex);
-
   json::value ms;
 
   if (mMessageCount >= mMaxMessages) {
